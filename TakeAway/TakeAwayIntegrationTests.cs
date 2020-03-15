@@ -3,8 +3,10 @@
     using NUnit.Framework;
     using OpenQA.Selenium;
     using OpenQA.Selenium.Chrome;
+    using OpenQA.Selenium.Firefox;
     using OpenQA.Selenium.Support.UI;
     using System;
+    using System.Collections.Generic;
     using System.IO;
     using System.Reflection;
     using System.Threading;
@@ -31,13 +33,29 @@
         string invalidPhoneNumberPath = projectDirectory + "/../../../TakeAway/JSONs/InvalidPhoneNumber.json";
         string invalidEmailPath = projectDirectory + "/../../../TakeAway/JSONs/InvalidEmail.json";
 
-        [SetUp]
-        public void SetUp()
+        public static IEnumerable<String> BrowserToRunWith()
         {
-            driver = new ChromeDriver(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
-            //driver = new FirefoxDriver(@"C:\TMP");
+            String[] browsers = { "chrome", "firefox" };
+
+            foreach (String b in browsers)
+            {
+                yield return b;
+            }
+        }
+
+        public void SetUp(String browserName)
+        {
+            if (browserName.Equals("chrome"))
+            {
+                driver = new ChromeDriver(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+            }
+            else
+            {
+                driver = new FirefoxDriver(@"C:\TMP");
+            }
+
             driver.Manage().Window.Maximize();
-            wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
+            wait = new WebDriverWait(driver, TimeSpan.FromSeconds(60));
             homePage = new HomePage(driver);
             restaurantsPage = new RestaurantsPage(driver);
             testRestaurantPage = new TestRestaurantPage(driver);
@@ -51,10 +69,14 @@
             driver.Manage().Cookies.DeleteAllCookies();
             driver.Quit();
         }
-
+        
+        
         [Test]
-        public void UserCanOrderIfEverythingIsFilledCorrectly()
+        [TestCaseSource("BrowserToRunWith")] 
+        public void UserCanOrderIfEverythingIsFilledCorrectly(String browserName)
         {
+            SetUp(browserName);
+
             var path = Path.GetFullPath(validUserDetailsPath);
             var details = PersonalDetails.FromJson(File.ReadAllText(path));
 
@@ -73,8 +95,11 @@
             Assert.IsNotNull(addressToSelect, "Address '8888 Alpha' does not exist");
             addressToSelect.Click();
 
+            // Needed for Firefox
+            Thread.Sleep(3000);
+
             // Get the number of restaurants cards in the html
-            int restaurantsCount = restaurantsPage.GetCollectionOfElementsByCssSelector(".js-restaurant.restaurant:not(#SingleRestaurantTemplateIdentifier)").Count;
+            int restaurantsCount = restaurantsPage.CollectionOfRestaurants.Count;
 
             // Get the number of restaurants from the label "Order from X restaurants"
             int listedRestaurantsCount = int.Parse(restaurantsPage.GetListedNumberOfRestaurants.Text);
@@ -134,8 +159,11 @@
         }
 
         [Test]
-        public void NavigateToRestaurantsPageUsingShowButton()
+        [TestCaseSource("BrowserToRunWith")]
+        public void NavigateToRestaurantsPageUsingShowButton(String browserName)
         {
+            SetUp(browserName);
+
             homePage.NavigateTo();
             homePage.InputPostCode.Click();
             homePage.InputPostCode.SendKeys("8888");
@@ -156,8 +184,11 @@
         }
 
         [Test]
-        public void VerifyThatUserCannotOrderWithEmptyBasket()
+        [TestCaseSource("BrowserToRunWith")]
+        public void VerifyThatUserCannotOrderWithEmptyBasket(String browserName)
         {
+            SetUp(browserName);
+
             homePage.NavigateTo();
             homePage.InputPostCode.Click();
             homePage.InputPostCode.SendKeys("8888");
@@ -168,8 +199,11 @@
         }
 
         [Test]
-        public void VerifyThatUserCannotOrderWithEmptyPersonalDetails()
+        [TestCaseSource("BrowserToRunWith")]
+        public void VerifyThatUserCannotOrderWithEmptyPersonalDetails(String browserName)
         {
+            SetUp(browserName);
+
             homePage.NavigateTo();
             homePage.InputPostCode.Click();
             homePage.InputPostCode.SendKeys("8888");
@@ -194,8 +228,11 @@
         }
 
         [Test]
-        public void VerifyThatUserCannotOrderWithInvalidPhoneNumber()
+        [TestCaseSource("BrowserToRunWith")]
+        public void VerifyThatUserCannotOrderWithInvalidPhoneNumber(String browserName)
         {
+            SetUp(browserName);
+
             var path = Path.GetFullPath(invalidPhoneNumberPath);
             var details = PersonalDetails.FromJson(File.ReadAllText(path));
 
@@ -210,20 +247,24 @@
             testRestaurantPage.OrderSideDishButton.Click();
             testRestaurantPage.OrderButton.Click();
             addressAndPayPage.FillPersonalDetails(details);
+            string contactInfoAndPaymentPage = driver.Url;
             addressAndPayPage.OrderButton.Click();
 
-            // Check if the order was processed and the user was navigated to the confirmation page            string finishedOrderBaseUrl = "https://www.thuisbezorgd.nl/en/ordered-at-androidlicious#";
+            // Check if the order was processed and the user was navigated to the confirmation page
             string currentUrl = driver.Url;
 
-            if (currentUrl == finishedOrderBaseUrl)
+            if (currentUrl != contactInfoAndPaymentPage)
             {
                 Assert.Fail("Order was completed with invalid phone number.");
             }
         }
 
         [Test]
-        public void VerifyThatUserCannotOrderWithInvalidEmail()
+        [TestCaseSource("BrowserToRunWith")]
+        public void VerifyThatUserCannotOrderWithInvalidEmail(String browserName)
         {
+            SetUp(browserName);
+
             var path = Path.GetFullPath(invalidEmailPath);
             var details = PersonalDetails.FromJson(File.ReadAllText(path));
 

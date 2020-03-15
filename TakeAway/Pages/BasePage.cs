@@ -1,13 +1,20 @@
 ﻿namespace TakeAway.Pages
 {
+    using NUnit.Framework;
     using OpenQA.Selenium;
+    using OpenQA.Selenium.Chrome;
+    using OpenQA.Selenium.Firefox;
     using OpenQA.Selenium.Support.UI;
     using System;
+    using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.IO;
+    using System.Reflection;
 
     public class BasePage
     {
         private IWebDriver _driver;
+        
 
         public BasePage(IWebDriver driver)
         {
@@ -16,7 +23,7 @@
 
         public IWebDriver Driver => _driver;
 
-        public WebDriverWait Wait => new WebDriverWait(_driver, TimeSpan.FromSeconds(60));
+        public WebDriverWait Wait => new WebDriverWait(_driver, TimeSpan.FromSeconds(120));
 
         public string Url { get; protected set; }
 
@@ -27,7 +34,7 @@
         {
             Driver.Navigate().GoToUrl(Url);
         }
-
+        
         // Gets a collection of html elements matched by a CSS selector
         public ReadOnlyCollection<IWebElement> GetCollectionOfElementsByCssSelector(string selector)
         {
@@ -43,6 +50,8 @@
 
             return element;
         }
+
+        
     }
 }
 

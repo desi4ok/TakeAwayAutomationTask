@@ -12,5 +12,10 @@
 
         //Gets restaurant element different from template restaurant
         public IWebElement TestRestaurant => Wait.Until((d) => { return (this.GetElementByCssSelector(".js-restaurant.restaurant:not(#SingleRestaurantTemplateIdentifier)")); });
+
+        public ReadOnlyCollection<IWebElement> CollectionOfRestaurants => Wait.Until((d) => 
+            {
+                return (this.GetCollectionOfElementsByCssSelector(".js-restaurant.restaurant:not(#SingleRestaurantTemplateIdentifier)")); 
+            });
     }
 }
