@@ -51,7 +51,7 @@
             }
             else
             {
-                driver = new FirefoxDriver(@"C:\TMP");
+                driver = new FirefoxDriver(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
             }
 
             driver.Manage().Window.Maximize();
@@ -69,7 +69,6 @@
             driver.Manage().Cookies.DeleteAllCookies();
             driver.Quit();
         }
-        
         
         [Test]
         [TestCaseSource("BrowserToRunWith")] 
@@ -220,11 +219,20 @@
             addressAndPayPage.Name.Clear();
             addressAndPayPage.Email.Clear();
             addressAndPayPage.PhoneNumber.Clear();
+            string contactInfoAndPaymentPage = driver.Url;
             addressAndPayPage.OrderButton.Click();
+
+            // Check if the order was processed and the user was navigated to the confirmation page
+            string currentUrl = driver.Url;
+
+            if (currentUrl != contactInfoAndPaymentPage && currentUrl != contactInfoAndPaymentPage + "#") 
+            {
+                Assert.Fail("Order was completed with empty fields for personal details.");
+            }
 
             string errorMessage = addressAndPayPage.ErrorMessage.Text.Trim();
             string trueErrorMessage = "Please fill out your Name, Telephone Number, Email Address, delivery address, Postcode and town .";
-            Assert.IsTrue(errorMessage == trueErrorMessage);
+            Assert.IsTrue(errorMessage == trueErrorMessage, "Incorrect message, when personal details info is empty");
         }
 
         [Test]
@@ -253,7 +261,7 @@
             // Check if the order was processed and the user was navigated to the confirmation page
             string currentUrl = driver.Url;
 
-            if (currentUrl != contactInfoAndPaymentPage)
+            if (currentUrl != contactInfoAndPaymentPage && currentUrl != contactInfoAndPaymentPage + "#")
             {
                 Assert.Fail("Order was completed with invalid phone number.");
             }
@@ -279,15 +287,19 @@
             testRestaurantPage.OrderSideDishButton.Click();
             testRestaurantPage.OrderButton.Click();
             addressAndPayPage.FillPersonalDetails(details);
+            string contactInfoAndPaymentPage = driver.Url;
             addressAndPayPage.OrderButton.Click();
 
+            string errorMessage = addressAndPayPage.ErrorMessage.Text.Trim();
+            string trueErrorMessage = "Your email address is invalid, please check your email address and try again";
+            Assert.IsTrue(errorMessage == trueErrorMessage, "Incorrect message when entered e-mail is invalid");
+
             // Check if the order was processed and the user was navigated to the confirmation page
-            string finishedOrderBaseUrl = "https://www.thuisbezorgd.nl/en/ordered-at-androidlicious#";
             string currentUrl = driver.Url;
 
-            if (currentUrl == finishedOrderBaseUrl)
+            if (currentUrl != contactInfoAndPaymentPage && currentUrl != contactInfoAndPaymentPage + "#")
             {
-                Assert.Fail("Order was completed with invalid email.");
+                Assert.Fail("Order was completed with invalid e-mail.");
             }
         }
     }
