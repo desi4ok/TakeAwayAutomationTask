@@ -149,9 +149,11 @@
             // Select the closest higher amount to pay
             addressAndPayPage.PaymentAmountOption.SelectByIndex(1);
 
+            // Select ASAP
+            //addressAndPayPage.DeliveryTimeOption.SelectByIndex(0);
+
             // Click on the "Order" button
             addressAndPayPage.OrderButton.Click();
-
             // Get the Order Id
             string orderNumber = orderNumberPage.GetOrderNumber.Text;
             Console.WriteLine(orderNumber);
@@ -255,6 +257,8 @@
             testRestaurantPage.OrderSideDishButton.Click();
             testRestaurantPage.OrderButton.Click();
             addressAndPayPage.FillPersonalDetails(details);
+            //addressAndPayPage.DeliveryTimeOption.SelectByIndex(0);
+            addressAndPayPage.PaymentAmountOption.SelectByIndex(1);
             string contactInfoAndPaymentPage = driver.Url;
             addressAndPayPage.OrderButton.Click();
 
@@ -287,6 +291,8 @@
             testRestaurantPage.OrderSideDishButton.Click();
             testRestaurantPage.OrderButton.Click();
             addressAndPayPage.FillPersonalDetails(details);
+            //addressAndPayPage.DeliveryTimeOption.SelectByIndex(0);
+            addressAndPayPage.PaymentAmountOption.SelectByIndex(1);
             string contactInfoAndPaymentPage = driver.Url;
             addressAndPayPage.OrderButton.Click();
 

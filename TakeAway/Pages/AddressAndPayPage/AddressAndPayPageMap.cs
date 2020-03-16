@@ -23,6 +23,10 @@
         public IWebElement PaymentAmount => Wait.Until((d) => { return (this.GetElementByCssSelector("#ipayswith")); });
         public SelectElement PaymentAmountOption => new SelectElement(this.PaymentAmount);
 
+        // Gets the button element for delivery time
+        public IWebElement DeliveryTime => Wait.Until((d) => { return (this.GetElementByCssSelector("#ideliverytimen")); });
+        public SelectElement DeliveryTimeOption => new SelectElement(this.DeliveryTime);
+
         //Gets the button element for Order and Pay
         public IWebElement OrderButton => Wait.Until((d) => { return (this.GetElementByCssSelector(".button_form.cartbutton-button")); });
 

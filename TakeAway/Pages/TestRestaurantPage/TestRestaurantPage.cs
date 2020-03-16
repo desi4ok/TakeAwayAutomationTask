@@ -14,7 +14,7 @@
 
         // Gets the button element for order item with side dish
         public IWebElement OrderSideDishButton => Wait.Until((d) => { return (this.GetElementByCssSelector(".cartbutton-button.cartbutton-button-sidedishes.add-btn-icon")); });
-
+        
         //Gets the button for Order
         public IWebElement OrderButton => Wait.Until((d) => { return (this.GetElementByCssSelector(".basket__order-button.cartbutton-button")); });
     }
