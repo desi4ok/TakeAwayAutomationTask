@@ -8,14 +8,14 @@
         public RestaurantsPage(IWebDriver driver) : base(driver) { }
 
         //Gets the number of listed restaurants
-        public IWebElement GetListedNumberOfRestaurants => Wait.Until((d) => { return (this.GetElementByCssSelector(".restaurant-amount")); });
+        public IWebElement GetListedNumberOfRestaurants => wait.Until((d) => { return d.FindElement(By.CssSelector(".restaurant-amount")); });
 
         //Gets restaurant element different from template restaurant
-        public IWebElement TestRestaurant => Wait.Until((d) => { return (this.GetElementByCssSelector(".js-restaurant.restaurant:not(#SingleRestaurantTemplateIdentifier)")); });
+        public IWebElement TestRestaurant => wait.Until((d) => { return d.FindElement(By.CssSelector(".js-restaurant.restaurant:not(#SingleRestaurantTemplateIdentifier)")); });
 
-        public ReadOnlyCollection<IWebElement> CollectionOfRestaurants => Wait.Until((d) => 
+        public ReadOnlyCollection<IWebElement> CollectionOfRestaurants => wait.Until((d) => 
             {
-                return (this.GetCollectionOfElementsByCssSelector(".js-restaurant.restaurant:not(#SingleRestaurantTemplateIdentifier)")); 
+               return d.FindElements(By.CssSelector(".js-restaurant.restaurant:not(#SingleRestaurantTemplateIdentifier)"));
             });
     }
 }

@@ -12,21 +12,21 @@
         }
 
         // Gets the element for typing the post code
-        public IWebElement InputPostCode => Wait.Until((d) => { return this.GetElementByCssSelector("#imysearchstring"); });
+        public IWebElement InputPostCode => wait.Until((d) => { return d.FindElement(By.CssSelector("#imysearchstring")); });
 
         // Gets the Post Code suggestion element
-        public IWebElement PostCodeSuggestion => Wait.Until((d) => { return (this.GetElementByCssSelector(".lp__place.selected")); });
+        public IWebElement PostCodeSuggestion => wait.Until((d) => { return d.FindElement(By.CssSelector(".lp__place.selected")); });
 
         //Gets the button element for post code submit
-        public IWebElement SubmitPostCodeButton => Wait.Until((d) => { return (this.GetElementByCssSelector("#submit_deliveryarea")); });
+        public IWebElement SubmitPostCodeButton => wait.Until((d) => { return d.FindElement(By.CssSelector("#submit_deliveryarea")); });
 
         // Gets all listed addresses from the Search combobox and returns the matched element
         public IWebElement SelectAddress(string searchAddresss)
         {
-            IWebElement addressElement = Wait.Until((d) =>
+            IWebElement addressElement = wait.Until((d) =>
             {
                 IWebElement element = null;
-                ReadOnlyCollection<IWebElement> addresses = this.GetCollectionOfElementsByCssSelector("#reference > span");
+                ReadOnlyCollection<IWebElement> addresses = d.FindElements(By.CssSelector("#reference > span"));
 
                 foreach (IWebElement address in addresses)
                 {

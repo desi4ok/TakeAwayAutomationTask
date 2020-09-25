@@ -20,7 +20,6 @@
     public class TakeAwayIntegrationTests
     {
         private IWebDriver driver;
-        private WebDriverWait wait;
         private HomePage homePage;
         private RestaurantsPage restaurantsPage;
         private TestRestaurantPage testRestaurantPage;
@@ -55,7 +54,6 @@
             }
 
             driver.Manage().Window.Maximize();
-            wait = new WebDriverWait(driver, TimeSpan.FromSeconds(60));
             homePage = new HomePage(driver);
             restaurantsPage = new RestaurantsPage(driver);
             testRestaurantPage = new TestRestaurantPage(driver);
